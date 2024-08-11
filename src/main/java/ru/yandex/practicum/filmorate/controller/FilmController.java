@@ -21,7 +21,7 @@ public class FilmController {
     public Film addFilm(@RequestBody @Valid Film film) {
         log.info("Adding film {} - Started", film);
         int id = generateId();
-        film.setId(generateId());
+        film.setId(id);
         films.put(id, film);
         log.info("Adding film {} - Finished", film);
         return film;
@@ -30,7 +30,11 @@ public class FilmController {
     @PutMapping
     public Film updateFilm(@RequestBody @Valid Film film) {
         log.info("Updating film {} - Started", film);
-        films.put(film.getId(), film);
+        int id = film.getId();
+        if (!films.containsKey(id)) {
+            throw new IllegalArgumentException("Films doesn't contains film with id" + id);
+        }
+        films.put(id, film);
         log.info("Updating film {} - Finished", film);
         return film;
     }
@@ -41,6 +45,6 @@ public class FilmController {
     }
 
     private int generateId() {
-        return counter++;
+        return ++counter;
     }
 }

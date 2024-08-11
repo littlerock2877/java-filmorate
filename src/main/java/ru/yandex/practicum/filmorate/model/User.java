@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 public class User {
-    @NotNull(message = "User id could not be null")
     private int id;
 
     @Email(message = "Email should be valid")

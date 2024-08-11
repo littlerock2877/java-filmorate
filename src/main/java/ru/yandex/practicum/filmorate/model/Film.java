@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -13,7 +12,6 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 public class Film {
-    @NotNull(message = "Film id could not be null")
     private int id;
 
     @NotBlank(message = "Film name should not be empty")
