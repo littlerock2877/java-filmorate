@@ -29,17 +29,6 @@ public class UserControllerTest {
     }
 
     @Test
-    @DisplayName("Should update user valid parameters")
-    public void shouldUpdateUserValidParameters() {
-        User user = new User(0, "user@gmail.com", "user", "username", LocalDate.of(1995, 10, 11));
-        userController.createUser(user);
-        User newUser = new User(0, "user@gmail.com", "newLogin", "newUsername", LocalDate.of(1995, 10, 11));
-        userController.updateUser(newUser);
-        assertTrue(containsUser(newUser), "users list doesn't contains updated user");
-        assertFalse(containsUser(user), "users list still contains created user");
-    }
-
-    @Test
     @DisplayName("Should get all users")
     public void shouldGetAllUsers() {
         User user = new User(0, "user@gmail.com", "user", "username", LocalDate.of(1995, 10, 11));

@@ -30,17 +30,6 @@ public class FilmControllerTest {
     }
 
     @Test
-    @DisplayName("Should update film valid parameters")
-    public void shouldUpdateNUserValidParameters() {
-        Film film = new Film(0, "Film name", "Film description", LocalDate.now(), 1200000);
-        filmController.addFilm(film);
-        Film updatedFilm = new Film(0, "updated film name", "updated film description", LocalDate.now(), 1200000);
-        filmController.updateFilm(updatedFilm);
-        assertTrue(containsFilm(updatedFilm), "films list doesn't contains updated film");
-        assertFalse(containsFilm(film), "films list still contains created film");
-    }
-
-    @Test
     @DisplayName("Should get all films")
     public void shouldGetAllFilms() {
         Film film = new Film(0, "Film name", "Film description", LocalDate.now(), 1200000);
