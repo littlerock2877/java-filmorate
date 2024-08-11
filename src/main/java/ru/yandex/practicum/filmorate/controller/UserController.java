@@ -21,10 +21,10 @@ public class UserController {
     public User createUser(@RequestBody @Valid User user) {
         log.info("Creating user {} - Started", user);
         int id = generateId();
-        if (user.getName().isEmpty()) {
+        if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-        user.setId(generateId());
+        user.setId(id);
         users.put(id, user);
         log.info("Creating user {} - Finished", user);
         return user;
@@ -33,10 +33,14 @@ public class UserController {
     @PutMapping
     public User updateUser(@RequestBody @Valid User user) {
         log.info("Updating user {} - Started", user);
-        if (user.getName().isEmpty()) {
+        int id = user.getId();
+        if (!users.containsKey(id)) {
+            throw new IllegalArgumentException("Users doesn't contains user with id" + id);
+        }
+        if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-        users.put(user.getId(), user);
+        users.put(id, user);
         log.info("Updating user {} - Finished", user);
         return user;
     }
@@ -47,6 +51,6 @@ public class UserController {
     }
 
     private int generateId() {
-        return counter++;
+        return ++counter;
     }
 }

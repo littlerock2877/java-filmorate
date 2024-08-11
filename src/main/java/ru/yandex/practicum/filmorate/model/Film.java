@@ -13,7 +13,6 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 public class Film {
-    @NotNull(message = "Film id could not be null")
     private int id;
 
     @NotBlank(message = "Film name should not be empty")
