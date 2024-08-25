@@ -4,8 +4,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.user.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,13 +21,14 @@ public class UserControllerTest {
 
     @BeforeEach
     public void beforeEach() {
-        userController = new UserController();
+        UserStorage userStorage = new InMemoryUserStorage();
+        userController = new UserController(userStorage, new UserService(userStorage));
     }
 
     @Test
     @DisplayName("Should create new valid user")
     public void shouldCreateNewValidUser() {
-        User user = new User(0, "user@gmail.com", "user", "username", LocalDate.of(1995, 10, 11));
+        User user = new User(0, "user@gmail.com", "user", "username", LocalDate.of(1995, 10, 11), new HashSet<>());
         userController.createUser(user);
         assertTrue(containsUser(user), "users list doesn't contains created user");
     }
@@ -31,7 +36,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("Should get all users")
     public void shouldGetAllUsers() {
-        User user = new User(0, "user@gmail.com", "user", "username", LocalDate.of(1995, 10, 11));
+        User user = new User(0, "user@gmail.com", "user", "username", LocalDate.of(1995, 10, 11), new HashSet<>());
         userController.createUser(user);
         List<User> savedUsers = userController.getAllUsers();
         assertFalse(savedUsers.isEmpty(), "saved users list is empty");
