@@ -26,7 +26,7 @@ public class FilmService {
         return film;
     }
 
-    public Film removeLike(int filmId, int userId){
+    public Film removeLike(int filmId, int userId) {
         Film film = filmStorage.getFilmById(filmId);
         userStorage.getUserById(userId);
         Set<Integer> likedUsersIds = film.getLikedUsersIds();
