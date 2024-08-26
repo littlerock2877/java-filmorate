@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
@@ -27,5 +28,6 @@ public class Film {
     @Positive(message = "Film duration should be positive")
     private long duration;
 
+    @JsonIgnore
     private Set<Integer> likedUsersIds;
 }

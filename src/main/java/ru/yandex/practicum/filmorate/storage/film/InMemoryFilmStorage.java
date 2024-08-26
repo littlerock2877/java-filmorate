@@ -27,9 +27,8 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (!films.containsKey(id)) {
             throw new NotFoundException(String.format("Film with id %d doesn't exist", id));
         }
-        if (film.getLikedUsersIds() == null) {
-            film.setLikedUsersIds(new HashSet<>());
-        }
+        Film existingFilm = films.get(id);
+        film.setLikedUsersIds(existingFilm.getLikedUsersIds());
         films.put(id, film);
         return film;
     }

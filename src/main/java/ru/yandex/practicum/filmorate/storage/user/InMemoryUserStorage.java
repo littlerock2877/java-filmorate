@@ -19,9 +19,7 @@ public class InMemoryUserStorage implements UserStorage {
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-        if (user.getFriendsIds() == null) {
-            user.setFriendsIds(new HashSet<>());
-        }
+        user.setFriendsIds(new HashSet<>());
         user.setId(id);
         users.put(id, user);
         return user;
@@ -36,9 +34,8 @@ public class InMemoryUserStorage implements UserStorage {
         if (user.getName() == null || user.getName().isEmpty()) {
             user.setName(user.getLogin());
         }
-        if (user.getFriendsIds() == null) {
-            user.setFriendsIds(new HashSet<>());
-        }
+        User existingUser = users.get(id);
+        user.setFriendsIds(existingUser.getFriendsIds());
         users.put(id, user);
         return user;
     }

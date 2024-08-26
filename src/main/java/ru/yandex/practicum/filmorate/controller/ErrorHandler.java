@@ -27,6 +27,6 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Map<String, String> handleException(final Throwable e) {
-        return Map.of("error", e.getMessage(), "stack_trace", Arrays.toString(e.getStackTrace()));
+        return Map.of("error", e.getMessage(), "stackTrace", Arrays.toString(e.getStackTrace()));
     }
 }

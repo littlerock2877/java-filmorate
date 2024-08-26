@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.util.*;
 
@@ -16,14 +15,13 @@ import java.util.*;
 @Slf4j
 @RequiredArgsConstructor
 public class FilmController {
-    private final FilmStorage filmStorage;
     private final FilmService filmService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Film addFilm(@RequestBody @Valid Film film) {
         log.info("Adding film {} - Started", film);
-        film = filmStorage.addFilm(film);
+        film = filmService.addFilm(film);
         log.info("Adding film {} - Finished", film);
         return film;
     }
@@ -31,7 +29,7 @@ public class FilmController {
     @PutMapping
     public Film updateFilm(@RequestBody @Valid Film film) {
         log.info("Updating film {} - Started", film);
-        film = filmStorage.updateFilm(film);
+        film = filmService.updateFilm(film);
         log.info("Updating film {} - Finished", film);
         return film;
     }
@@ -57,25 +55,22 @@ public class FilmController {
         log.info("Getting {} most popular films - Started", count);
         List<Film> mostPopularFilms = filmService.getMostPopularFilms(count);
         log.info("Getting {} most popular films - {}", count, mostPopularFilms.toString());
-        log.info("Getting {} most popular films - Finished", count);
         return mostPopularFilms;
     }
 
     @GetMapping("/{filmId}")
     public Film getFilmById(@PathVariable int filmId) {
         log.info("Getting film with id {} - Started", filmId);
-        Film film = filmStorage.getFilmById(filmId);
+        Film film = filmService.getFilmById(filmId);
         log.info("Getting film with id {} - User = {}", filmId, film);
-        log.info("Getting film with id {} - Finished", filmId);
         return film;
     }
 
     @GetMapping
     public List<Film> getAllFilms() {
         log.info("Getting all films - Started");
-        List<Film> allFilms = filmStorage.getAllFilms();
+        List<Film> allFilms = filmService.getAllFilms();
         log.info("Getting all films - {}", allFilms.toString());
-        log.info("Getting all films - Finished");
         return allFilms;
     }
 }
