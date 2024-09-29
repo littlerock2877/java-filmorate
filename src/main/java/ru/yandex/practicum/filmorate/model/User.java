@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -23,4 +25,7 @@ public class User {
 
     @PastOrPresent(message = "Birthday couldn't be in the future")
     private LocalDate birthday;
+
+    @JsonIgnore
+    private Set<Integer> friendsIds;
 }
