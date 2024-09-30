@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
 
@@ -20,7 +21,7 @@ public class FilmTest {
     @Test
     @DisplayName("Should validate film with empty name")
     public void shouldValidateFilmWithEmptyName() {
-        Film film = new Film(0, "", "Film description", LocalDate.now(), 1200000, new HashSet<>());
+        Film film = new Film(0, "", "Film description", LocalDate.now(), 1200000, new LinkedHashSet<>(), new Mpa(0, "PG-13"), new HashSet<>());
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertFalse(violations.isEmpty());
     }
@@ -28,7 +29,7 @@ public class FilmTest {
     @Test
     @DisplayName("Should validate film with null name")
     public void shouldValidateFilmWithNullName() {
-        Film film = new Film(0, null, "Film description", LocalDate.now(), 1200000, new HashSet<>());
+        Film film = new Film(0, null, "Film description", LocalDate.now(), 1200000, new LinkedHashSet<>(), new Mpa(0, "PG-13"), new HashSet<>());
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertFalse(violations.isEmpty());
     }
@@ -36,7 +37,7 @@ public class FilmTest {
     @Test
     @DisplayName("Should validate film with long description")
     public void shouldValidateFilmWithLongDescription() {
-        Film film = new Film(0, "name", generateStringWithSize(201), LocalDate.now(), 1200000, new HashSet<>());
+        Film film = new Film(0, "Film name", generateStringWithSize(201), LocalDate.now(), 1200000, new LinkedHashSet<>(), new Mpa(0, "PG-13"), new HashSet<>());
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertFalse(violations.isEmpty());
     }
@@ -44,7 +45,7 @@ public class FilmTest {
     @Test
     @DisplayName("Should validate film with negative duration")
     public void shouldValidateFilmWithNegativeDuration() {
-        Film film = new Film(0, "name", "Film description", LocalDate.now(), -1, new HashSet<>());
+        Film film = new Film(0, "Film name", "Film description", LocalDate.now(), -1, new LinkedHashSet<>(), new Mpa(0, "PG-13"), new HashSet<>());
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertFalse(violations.isEmpty());
     }
@@ -52,7 +53,7 @@ public class FilmTest {
     @Test
     @DisplayName("Should validate film with incorrect release date")
     public void shouldValidateFilmWithIncorrectReleaseDate() {
-        Film film = new Film(0, "name", "Film description", LocalDate.of(1,1, 1), 1200000, new HashSet<>());
+        Film film = new Film(0, "Film name", "Film description", LocalDate.of(1,1, 1), 1200000, new LinkedHashSet<>(), new Mpa(0, "PG-13"), new HashSet<>());
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertFalse(violations.isEmpty());
     }
