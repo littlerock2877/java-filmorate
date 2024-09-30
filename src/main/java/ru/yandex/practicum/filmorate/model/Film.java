@@ -1,18 +1,15 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.validation.ReleaseDate;
 
 import java.time.LocalDate;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Data
-@AllArgsConstructor
 public class Film {
     private int id;
 
@@ -27,6 +24,11 @@ public class Film {
 
     @Positive(message = "Film duration should be positive")
     private long duration;
+
+    private LinkedHashSet<Genre> genres;
+
+    @NotNull
+    private Mpa mpa;
 
     @JsonIgnore
     private Set<Integer> likedUsersIds;

@@ -9,7 +9,6 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Data
-@AllArgsConstructor
 public class User {
     private int id;
 
