@@ -17,6 +17,7 @@ public class UserService {
     }
 
     public User updateUser(User user) {
+        getUserById(user.getId());
         return userStorage.updateUser(user);
     }
 
@@ -33,10 +34,12 @@ public class UserService {
     }
 
     public User addFriend(int userId, int friendId) {
+        getUserById(friendId);
         return userStorage.addFriend(userId, friendId);
     }
 
     public User removeFriend(int userId, int friendId) {
+        getUserById(friendId);
         return userStorage.removeFriend(userId, friendId);
     }
 

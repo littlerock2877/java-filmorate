@@ -11,12 +11,9 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.genre.GenreRepository;
 import ru.yandex.practicum.filmorate.storage.mapper.FilmRowMapper;
 import ru.yandex.practicum.filmorate.storage.mapper.GenreRowMapper;
 import ru.yandex.practicum.filmorate.storage.mapper.UserRowMapper;
-import ru.yandex.practicum.filmorate.storage.mpa.MpaRepository;
-import ru.yandex.practicum.filmorate.storage.user.UserRepository;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -27,9 +24,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class JdbcFilmRepository implements FilmRepository {
     private final NamedParameterJdbcOperations jdbc;
-    private final MpaRepository mpaRepository;
-    private final GenreRepository genreRepository;
-    private final UserRepository userRepository;
     private final FilmRowMapper filmRowMapper;
     private final GenreRowMapper genreRowMapper;
     private final UserRowMapper userRowMapper;
@@ -38,13 +32,6 @@ public class JdbcFilmRepository implements FilmRepository {
     public Film addFilm(Film film) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
         int ratingId = film.getMpa().getId();
-        mpaRepository.findMpaById(ratingId).orElseThrow(() -> new IllegalArgumentException(String.format("Mpa with id %d doesn't exists", ratingId)));
-        if (film.getGenres() == null) {
-            film.setGenres(new LinkedHashSet<>());
-        }
-        for (Genre genre : film.getGenres()) {
-            genreRepository.findGenreById(genre.getId()).orElseThrow(() -> new IllegalArgumentException(String.format("Genre with id %d doesn't exists", genre.getId())));
-        }
         String sqlQuery = String.format("INSERT INTO films (name, description, release_date, duration, rating_id) VALUES (:name, :description, :releaseDate, :duration, %d)", ratingId);
         jdbc.batchUpdate(sqlQuery, SqlParameterSourceUtils.createBatch(film), keyHolder);
         film.setId(keyHolder.getKeyAs(Integer.class));
@@ -54,16 +41,16 @@ public class JdbcFilmRepository implements FilmRepository {
 
     @Override
     public Film updateFilm(Film film) {
-        getFilmById(film.getId());
-        String sqlQuery = String.format("UPDATE films SET name=':name', description=':description', release_date=:release_date, duration=:duration, rating_id=:rating_id WHERE id=%d", film.getId());
+        String sqlQuery = "UPDATE films SET name=':name', description=':description', release_date=:release_date, duration=:duration, rating_id=:rating_id WHERE id=:id";
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
         mapSqlParameterSource.addValue("rating_id", film.getMpa().getId());
         mapSqlParameterSource.addValue("name", film.getName());
         mapSqlParameterSource.addValue("description", film.getDescription());
         mapSqlParameterSource.addValue("release_date", film.getReleaseDate());
         mapSqlParameterSource.addValue("duration", film.getDuration());
+        mapSqlParameterSource.addValue("id", film.getId());
         jdbc.update(sqlQuery, mapSqlParameterSource);
-        sqlQuery = String.format("DELETE FROM film_genre WHERE film_id=%d", film.getId());
+        sqlQuery = "DELETE FROM film_genre WHERE film_id=:id";
         jdbc.update(sqlQuery, mapSqlParameterSource);
         updateGenres(film);
         return film;
@@ -76,23 +63,15 @@ public class JdbcFilmRepository implements FilmRepository {
         if (result.isEmpty()) {
             throw new NotFoundException(String.format("Film with id %d doesn't exist", filmId));
         }
-        List<Genre> genres = getFilmGenres(filmId);
         Film film = result.get(0);
-        film.setGenres(new LinkedHashSet<>(genres));
         film.setLikedUsersIds(getLikedUsers(filmId).stream().map(User::getId).collect(Collectors.toSet()));
-        return result.get(0);
+        return film;
     }
 
     @Override
     public List<Film> getAllFilms() {
         String sql = "SELECT f.id, f.name, f.description, f.release_date, f.duration, f.rating_id, m.name AS rating FROM films AS f JOIN mpa AS m ON f.rating_id=m.id;";
-        List<Film> films = jdbc.query(sql, filmRowMapper);
-        for (Film film : films) {
-            List<Genre> genres = getFilmGenres(film.getId());
-            film.setGenres(new LinkedHashSet<>(genres));
-            film.setLikedUsersIds(getLikedUsers(film.getId()).stream().map(User::getId).collect(Collectors.toSet()));
-        }
-        return films;
+        return jdbc.query(sql, filmRowMapper);
     }
 
     @Override
@@ -104,7 +83,6 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public Film addLike(int filmId, int userId) {
         Film film = getFilmById(filmId);
-        userRepository.getUserById(userId);
         String sqlQueryForGenres = "INSERT INTO film_likes(film_id, user_id) VALUES (:film_id, :user_id)";
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
         mapSqlParameterSource.addValue("film_id", filmId);
@@ -117,7 +95,6 @@ public class JdbcFilmRepository implements FilmRepository {
     @Override
     public Film removeLike(int filmId, int userId) {
         Film film = getFilmById(filmId);
-        userRepository.getUserById(userId);
         String sqlQueryForGenres = "DELETE FROM film_likes WHERE user_id=:user_id AND film_id=:film_id";
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
         mapSqlParameterSource.addValue("film_id", filmId);
@@ -142,11 +119,6 @@ public class JdbcFilmRepository implements FilmRepository {
         } else  {
             film.setGenres(new LinkedHashSet<>());
         }
-    }
-
-    private List<Genre> getFilmGenres(int filmId) {
-        String sqlQuery = String.format("SELECT g.id, g.genre FROM film_genre AS fg JOIN genre AS g ON g.id=fg.genre_id WHERE fg.film_id=%d", filmId);
-        return jdbc.query(sqlQuery, genreRowMapper);
     }
 
     private List<User> getLikedUsers(int filmId) {

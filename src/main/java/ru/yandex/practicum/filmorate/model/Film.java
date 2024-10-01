@@ -36,4 +36,11 @@ public class Film {
 
     @JsonIgnore
     private Set<Integer> likedUsersIds;
+
+    public void addGenre(Genre genre) {
+        if (genres == null) {
+            genres = new LinkedHashSet<>();
+        }
+        genres.add(genre);
+    }
 }

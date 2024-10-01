@@ -18,7 +18,6 @@ public class MpaService {
     }
 
     public Mpa findMpaById(int mpaId) {
-
         return mpaRepository.findMpaById(mpaId).orElseThrow(() -> new NotFoundException(String.format("Rating with id %d doesn't exist", mpaId)));
     }
 }

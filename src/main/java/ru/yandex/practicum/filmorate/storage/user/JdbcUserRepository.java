@@ -32,7 +32,6 @@ public class JdbcUserRepository implements UserRepository {
 
     @Override
     public User updateUser(User user) {
-        getUserById(user.getId());
         String sqlQuery = "UPDATE users SET email=':email', login=':login', user_name=:user_name, birthday=:birthday WHERE id=:id";
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
         mapSqlParameterSource.addValue("email", user.getEmail());
@@ -61,7 +60,6 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public User addFriend(int userId, int friendId) {
         User user = getUserById(userId);
-        getUserById(friendId);
         String sqlQuery = "INSERT INTO friendship (user_id, friend_id) VALUES (:user_id, :friend_id)";
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
         mapSqlParameterSource.addValue("user_id", userId);
@@ -78,7 +76,6 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     public User removeFriend(int userId, int friendId) {
         User user = getUserById(userId);
-        getUserById(friendId);
         String sqlQuery = "DELETE FROM friendship WHERE user_id=:user_id AND friend_id=:friend_id";
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
         mapSqlParameterSource.addValue("user_id", userId);
