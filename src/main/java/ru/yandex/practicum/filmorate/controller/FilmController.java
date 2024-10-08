@@ -62,7 +62,7 @@ public class FilmController {
     public Film getFilmById(@PathVariable int filmId) {
         log.info("Getting film with id {} - Started", filmId);
         Film film = filmService.getFilmById(filmId);
-        log.info("Getting film with id {} - User = {}", filmId, film);
+        log.info("Getting film with id {} - Film = {}", filmId, film);
         return film;
     }
 
